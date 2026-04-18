@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vashaar Sarmad - Developer, Creator, Student of Knowledge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Progress Bar -->
+    <div class="scroll-progress-bar"></div>
+
+    <!-- Custom Cursor Dot -->
+    <div class="cursor-dot"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="#home" class="navbar-logo">
+                <img src="assets/logo-bs.png.png" alt="BS Logo">
+            </a>
+            <ul class="navbar-menu">
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#projects" class="nav-link">Projects</a></li>
+                <li><a href="#content" class="nav-link">Content</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <svg class="geometric-pattern" viewBox="0 0 1200 800">
+            <defs>
+                <pattern id="geometric" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+                    <circle cx="50" cy="50" r="30" fill="none" stroke="rgba(201, 168, 76, 0.05)" stroke-width="1"/>
+                    <path d="M 50 20 L 80 50 L 50 80 L 20 50 Z" fill="none" stroke="rgba(201, 168, 76, 0.04)" stroke-width="0.5"/>
+                </pattern>
+            </defs>
+            <rect width="1200" height="800" fill="url(#geometric)"/>
+        </svg>
+        <div class="hero-background" style="background-image: url('assets/bg-frame.png.png')"></div>
+        <div class="hero-overlay"></div>
+        <div class="floating-particles">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+        <div class="hero-content">
+            <h1 class="hero-title">Vashaar Sarmad</h1>
+            <div class="title-underline"></div>
+            <p class="hero-subtitle"><span class="typing-text">Developer. Creator. Student of Knowledge.</span></p>
+            <div class="hero-buttons">
+                <a href="#projects" class="btn btn-primary">View Projects</a>
+                <a href="https://www.youtube.com/@BSBAQureshi" target="_blank" class="btn btn-secondary">YouTube Channel</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="container">
+            <h2 class="section-title">About Me</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>I'm Vashaar Sarmad — a Computer Science student, developer, and Islamic content creator. I build tools that serve creators and communities — and I produce long-form video essays rooted in Quranic scholarship under my platform, BS Qureshi.</p>
+                </div>
+                <div class="about-divider"></div>
+                <div class="about-image">
+                    <img src="assets/logo-bs.png.png" alt="BS Qureshi Logo">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section class="projects" id="projects">
+        <div class="container">
+            <h2 class="section-title">Projects</h2>
+            <div class="projects-grid">
+                <!-- SRTranslate -->
+                <div class="project-card project-srt" data-aos="fade-in" style="--stagger-delay: 0s;">
+                    <div class="project-logo">
+                        <img src="assets/srtranslate.png.png" alt="SRTranslate">
+                    </div>
+                    <h3>SRTranslate</h3>
+                    <p>Local SRT subtitle translation tool. Context-aware, glossary-backed, supports Urdu, Arabic, Spanish, and Indonesian. Built for creators expanding global audiences.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">Ollama</span>
+                        <span class="tech-tag">Streamlit</span>
+                        <span class="tech-tag">NLP</span>
+                    </div>
+                    <a href="https://github.com/Vashaar/SRTranslate" target="_blank" class="project-link btn-primary">View on GitHub</a>
+                </div>
+
+                <!-- PageSnip -->
+                <div class="project-card project-pagesnip" data-aos="fade-in" style="--stagger-delay: 0.15s;">
+                    <div class="project-logo">
+                        <img src="assets/pagesnip.png.png" alt="PageSnip">
+                    </div>
+                    <h3>PageSnip</h3>
+                    <p>Desktop PDF splitter with a clean GUI. Split any document by page range instantly.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">PDF</span>
+                        <span class="tech-tag">Desktop App</span>
+                    </div>
+                    <a href="https://github.com/Vashaar/PageSnip" target="_blank" class="project-link btn-primary">View on GitHub</a>
+                </div>
+
+                <!-- Hikmah Local AI -->
+                <div class="project-card project-hikmah" data-aos="fade-in" style="--stagger-delay: 0.3s;">
+                    <div class="project-logo">
+                        <img src="assets/hikmah.png.png" alt="Hikmah Local AI">
+                    </div>
+                    <h3>Hikmah Local AI</h3>
+                    <p>Local Islamic AI assistant with Quran, Hadith, Seerah, and Bible databases. Arabic transliteration, chat and reference modes.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">AI</span>
+                        <span class="tech-tag">Islamic</span>
+                        <span class="tech-tag">Local LLM</span>
+                    </div>
+                    <a href="https://github.com/Vashaar/hikmah-local-AI" target="_blank" class="project-link btn-primary">View on GitHub</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Content Section -->
+    <section class="content" id="content">
+        <div class="container">
+            <h2 class="section-title">Content</h2>
+            <p class="section-subtitle">Long-form Islamic video essays exploring Quranic scholarship, prophetic narratives, and the preservation of the Deen.</p>
+            <div class="channel-card" data-aos="fade-in">
+                <img src="assets/logo-bs.png.png" alt="BS Qureshi Channel">
+                <div class="channel-info">
+                    <h3>BS Qureshi</h3>
+                    <p>Subscribe to our YouTube channel for thoughtful, research-backed Islamic content.</p>
+                </div>
+                <a href="https://www.youtube.com/@BSBAQureshi" target="_blank" class="btn btn-primary">Subscribe on YouTube</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section (Footer) -->
+    <footer class="footer" id="contact">
+        <div class="footer-divider"></div>
+        <div class="container">
+            <h3 class="footer-title">Get In Touch</h3>
+            
+            <!-- Contact Form -->
+            <div class="contact-section contact-form-wrapper">
+                <h4 class="contact-heading">Send a Message</h4>
+                <form id="contactForm" class="contact-form">
+                    <div class="form-group">
+                        <label for="name">Your Name</label>
+                        <input type="text" id="name" name="name" required placeholder="Enter your name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Your Email</label>
+                        <input type="email" id="email" name="email" required placeholder="Enter your email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Preferred Contact Method</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="contactMethod" value="email" checked>
+                                <span>Email</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="contactMethod" value="phone">
+                                <span>Phone (Text Only)</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="contactMethod" value="facebook">
+                                <span>Facebook Page Contact</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" required placeholder="Tell me what you'd like to discuss..." rows="5"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                </form>
+                
+                <!-- Form Success Message (Hidden by default) -->
+                <div id="formSuccess" class="form-success" style="display: none;">
+                    <i class="fas fa-check-circle"></i>
+                    <h4>Message Received!</h4>
+                    <p id="successMessage"></p>
+                    <button type="button" class="btn btn-secondary" onclick="resetContactForm()">Send Another Message</button>
+                </div>
+            </div>
+            
+            <!-- Social Media -->
+            <div class="contact-section">
+                <h4 class="contact-heading">Connect</h4>
+                <div class="social-links">
+                    <a href="https://www.youtube.com/@BSBAQureshi" target="_blank" title="YouTube" aria-label="YouTube">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                    <a href="https://www.instagram.com/bsbqureshi/" target="_blank" title="Instagram" aria-label="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://www.tiktok.com/@bsbaqureshi" target="_blank" title="TikTok" aria-label="TikTok">
+                        <i class="fab fa-tiktok"></i>
+                    </a>
+                    <a href="https://www.facebook.com/profile.php?id=61580757495623" target="_blank" title="Facebook" aria-label="Facebook">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="https://github.com/Vashaar" target="_blank" title="GitHub" aria-label="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="https://linktr.ee/BSQureshi" target="_blank" title="Linktree" aria-label="Linktree">
+                        <i class="fas fa-link"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <p class="copyright">© 2025 BS Qureshi. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
