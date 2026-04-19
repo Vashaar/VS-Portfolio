@@ -1,244 +1,889 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vashaar Sarmad - Developer, Creator, Student of Knowledge</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vashaar Sarmad — Developer. Creator. Student of Knowledge.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* ── TOKENS ──────────────────────────────────────────────── */
+    :root {
+      --bg:        #07070a;
+      --bg2:       #0d0d11;
+      --surface:   #111116;
+      --border:    #1e1e26;
+      --gold:      #c9a84c;
+      --gold-dim:  rgba(201,168,76,0.12);
+      --gold-line: rgba(201,168,76,0.25);
+      --crimson:   #8b1a2a;
+      --navy:      #0c1930;
+      --txt:       #edeae3;
+      --txt-2:     #888580;
+      --txt-3:     #4a4845;
+      --radius:    6px;
+      --t:         0.3s ease;
+      --sans:      'Space Grotesk', sans-serif;
+      --mono:      'Space Mono', monospace;
+    }
+
+    /* ── RESET ───────────────────────────────────────────────── */
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--txt);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    /* ── SCROLL PROGRESS ─────────────────────────────────────── */
+    #progress {
+      position: fixed; top:0; left:0; height:2px; width:0;
+      background: linear-gradient(90deg, var(--gold), var(--crimson));
+      z-index: 9000; transition: width 0.1s linear;
+    }
+
+    /* ── CURSOR ──────────────────────────────────────────────── */
+    #cursor {
+      position: fixed; width:8px; height:8px;
+      background: var(--gold); border-radius:50%;
+      pointer-events: none; z-index: 9999;
+      transform: translate(-50%,-50%);
+      box-shadow: 0 0 14px rgba(201,168,76,0.7);
+      transition: transform 0.15s, opacity 0.2s;
+      opacity: 0;
+    }
+
+    /* ── NAV ─────────────────────────────────────────────────── */
+    .nav {
+      position: fixed; top:0; left:0; right:0;
+      height: 72px;
+      display: flex; align-items: center;
+      z-index: 800;
+      transition: background var(--t), height var(--t), border-color var(--t);
+      border-bottom: 1px solid transparent;
+    }
+    .nav.scrolled {
+      height: 60px;
+      background: rgba(7,7,10,0.92);
+      backdrop-filter: blur(18px);
+      border-bottom-color: var(--border);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 32px;
+      width:100%; display:flex; align-items:center; justify-content:space-between;
+    }
+    .nav-logo img { height: 52px; width: auto; transition: var(--t); }
+    .nav.scrolled .nav-logo img { height: 44px; }
+    .nav-logo:hover img { filter: drop-shadow(0 0 12px rgba(201,168,76,0.6)); }
+
+    .nav-links { display:flex; gap:40px; list-style:none; }
+    .nav-links a {
+      font-size: 0.85rem; font-weight: 500; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--txt-2);
+      transition: color var(--t); position: relative; padding-bottom: 4px;
+    }
+    .nav-links a::after {
+      content:''; position:absolute; bottom:0; left:0; width:0; height:1px;
+      background: var(--gold); transition: width var(--t);
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--txt); }
+    .nav-links a:hover::after, .nav-links a.active::after { width:100%; }
+
+    .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; }
+    .hamburger span { display:block; width:24px; height:2px; background:var(--gold); transition:var(--t); }
+    .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
+    .hamburger.open span:nth-child(2) { opacity:0; }
+    .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
+
+    .mobile-menu {
+      display:none; position:fixed; top:60px; left:0; right:0;
+      background: rgba(7,7,10,0.97); backdrop-filter:blur(18px);
+      border-bottom: 1px solid var(--border); z-index:799;
+      flex-direction:column; padding:24px 32px 32px;
+      gap:0; list-style:none;
+    }
+    .mobile-menu.open { display:flex; }
+    .mobile-menu a {
+      display:block; padding:14px 0; font-size:1rem; font-weight:500;
+      color:var(--txt-2); border-bottom:1px solid var(--border);
+      transition:color var(--t);
+    }
+    .mobile-menu a:hover { color:var(--gold); }
+
+    /* ── FIXED PAGE BACKGROUND ──────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background: url('assets/bg-frame.png') center/cover no-repeat;
+      background-attachment: fixed;
+      transform: scale(1.08);
+      z-index: -1;
+      pointer-events: none;
+      display: none;
+    }
+
+    /* ── HERO ────────────────────────────────────────────────── */
+    .hero {
+      position: relative; height: 100vh; min-height: 640px;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position:absolute; inset:0;
+      background: transparent;
+      transform: scale(1.06) translateY(0);
+      transition: transform 0.6s ease;
+    }
+    .hero-bg-overlay {
+      position:absolute; inset:0;
+      background: linear-gradient(
+        to bottom,
+        rgba(7,7,10,0.55) 0%,
+        rgba(7,7,10,0.45) 40%,
+        rgba(7,7,10,0.90) 85%,
+        var(--bg) 100%
+      );
+    }
+    /* subtle noise grain */
+    .hero-bg-overlay::after {
+      content:'';
+      position:absolute; inset:0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      background-size: 200px 200px; opacity:0.5; pointer-events:none;
+    }
+
+    .hero-content {
+      position:relative; z-index:2;
+      text-align:center; padding:0 24px;
+      animation: heroFade 1.2s ease-out both;
+    }
+    @keyframes heroFade {
+      from { opacity:0; transform:translateY(28px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    .hero-eyebrow {
+      font-family: var(--mono); font-size:0.78rem; letter-spacing:0.2em;
+      text-transform: uppercase; color:var(--gold); margin-bottom:20px;
+      opacity:0; animation: heroFade 0.8s ease-out 0.2s both;
+    }
+
+    .hero-name {
+      font-size: clamp(3.2rem, 8vw, 7.5rem);
+      font-weight: 700; line-height: 1.04; letter-spacing: -0.02em;
+      color: var(--txt);
+      opacity:0; animation: heroFade 0.9s ease-out 0.35s both;
+    }
+    .hero-name span { color: var(--gold); }
+
+    .hero-line {
+      width: 80px; height:1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 28px auto;
+      opacity:0; animation: heroFade 0.8s ease-out 0.5s both;
+    }
+
+    .hero-tagline {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      font-weight: 400; color: var(--txt-2); letter-spacing: 0.04em;
+      min-height: 34px;
+      opacity:0; animation: heroFade 0.8s ease-out 0.65s both;
+    }
+    #typing-cursor {
+      display:inline-block; width:2px; height:1.1em;
+      background:var(--gold); margin-left:2px; vertical-align:text-bottom;
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+
+    .hero-btns {
+      margin-top:44px; display:flex; gap:16px; justify-content:center; flex-wrap:wrap;
+      opacity:0; animation: heroFade 0.8s ease-out 0.85s both;
+    }
+
+    .btn {
+      display:inline-flex; align-items:center; gap:8px;
+      padding:13px 28px; border-radius:var(--radius);
+      font-family:var(--sans); font-size:0.88rem; font-weight:600;
+      letter-spacing:0.06em; text-transform:uppercase;
+      cursor:pointer; border:none; transition:var(--t);
+    }
+    .btn-gold {
+      background:var(--gold); color:#08080a;
+    }
+    .btn-gold:hover { background:#d4b05a; box-shadow:0 0 24px rgba(201,168,76,0.4); }
+    .btn-outline {
+      background:transparent; color:var(--txt);
+      border:1px solid var(--border);
+    }
+    .btn-outline:hover { border-color:var(--gold); color:var(--gold); }
+
+    .hero-scroll {
+      position:absolute; bottom:36px; left:50%; transform:translateX(-50%);
+      display:flex; flex-direction:column; align-items:center; gap:8px; z-index:2;
+      opacity:0; animation:heroFade 0.8s ease-out 1.2s both;
+    }
+    .hero-scroll span {
+      font-family:var(--mono); font-size:0.65rem; letter-spacing:0.15em;
+      text-transform:uppercase; color:var(--txt-3);
+    }
+    .scroll-line {
+      width:1px; height:40px;
+      background:linear-gradient(to bottom, var(--gold), transparent);
+      animation:scrollPulse 2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%,100%{opacity:0.3; transform:scaleY(1);}
+      50%{opacity:1; transform:scaleY(1.2);}
+    }
+
+    /* ── SECTIONS ────────────────────────────────────────────── */
+    section { padding: 120px 0; }
+    .container { max-width:1200px; margin:0 auto; padding:0 32px; }
+
+    .section-label {
+      font-family:var(--mono); font-size:0.72rem; letter-spacing:0.18em;
+      text-transform:uppercase; color:var(--gold); margin-bottom:14px;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight:700; line-height:1.15; letter-spacing:-0.02em;
+    }
+    .section-title em { font-style:normal; color:var(--gold); }
+
+    /* gold rule */
+    .rule { width:100%; height:1px; background:var(--border); margin:0; }
+    .rule-gold { background:linear-gradient(90deg, transparent, var(--gold-line), transparent); }
+
+    /* ── ABOUT ───────────────────────────────────────────────── */
+    #about { background:var(--bg2); position:relative; }
+    .about-grid {
+      display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center;
+    }
+    .about-text .section-label { margin-bottom:14px; }
+    .about-text .section-title { margin-bottom:28px; }
+    .about-text p {
+      font-size:1.05rem; line-height:1.85; color:var(--txt-2);
+      margin-bottom:16px;
+    }
+    .about-text p:last-of-type { margin-bottom:0; }
+    .about-pills {
+      display:flex; flex-wrap:wrap; gap:10px; margin-top:32px;
+    }
+    .pill {
+      padding:6px 16px; border:1px solid var(--border);
+      border-radius:40px; font-size:0.8rem; color:var(--txt-2);
+      font-weight:500; letter-spacing:0.04em;
+      transition:var(--t);
+    }
+    .pill:hover { border-color:var(--gold); color:var(--gold); }
+
+    .about-visual {
+      display:flex; align-items:center; justify-content:center;
+      position:relative;
+    }
+    .about-logo-wrap {
+      width:300px; height:300px; border-radius:50%;
+      border:1px solid var(--border);
+      display:flex; align-items:center; justify-content:center;
+      position:relative; overflow:hidden;
+      background: radial-gradient(circle at center, rgba(201,168,76,0.06) 0%, transparent 70%);
+      transition:var(--t);
+    }
+    .about-logo-wrap:hover { border-color:var(--gold-line); }
+    .about-logo-wrap::before {
+      content:''; position:absolute; inset:0; border-radius:50%;
+      background: conic-gradient(var(--gold) 0deg, transparent 60deg, transparent 300deg, var(--gold) 360deg);
+      opacity:0.12;
+    }
+    .about-logo-wrap img { width:75%; filter:drop-shadow(0 0 28px rgba(201,168,76,0.25)); }
+
+    /* ── PROJECTS ────────────────────────────────────────────── */
+    #projects { background:var(--bg); }
+    .projects-header {
+      display:flex; align-items:flex-end; justify-content:space-between;
+      margin-bottom:60px; gap:24px; flex-wrap:wrap;
+    }
+    .projects-grid {
+      display:grid; grid-template-columns:repeat(3,1fr); gap:24px;
+    }
+
+    .proj-card {
+      position:relative; border-radius:10px; overflow:hidden;
+      border:1px solid var(--border);
+      background:var(--surface);
+      transition:transform var(--t), border-color var(--t), box-shadow var(--t);
+      cursor:pointer;
+      display:flex; flex-direction:column;
+    }
+    .proj-card:hover {
+      transform:translateY(-6px);
+      border-color:var(--gold-line);
+      box-shadow:0 24px 60px rgba(0,0,0,0.5), 0 0 0 1px var(--gold-line);
+    }
+
+    .proj-img-wrap {
+      position:relative; overflow:hidden;
+      aspect-ratio:4/3;
+      background:var(--bg2);
+      display:flex; align-items:center; justify-content:center;
+    }
+    .proj-img-wrap img {
+      width:65%; height:65%; object-fit:contain;
+      transition:transform 0.6s ease;
+    }
+    .proj-card:hover .proj-img-wrap img { transform:scale(1.08); }
+
+    /* colored top accent */
+    .proj-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:2px;
+      background:var(--card-accent, var(--gold));
+      transform:scaleX(0); transform-origin:left;
+      transition:transform 0.4s ease; z-index:1;
+    }
+    .proj-card:hover::before { transform:scaleX(1); }
+
+    .proj-body { padding:28px; flex:1; display:flex; flex-direction:column; }
+    .proj-num {
+      font-family:var(--mono); font-size:0.7rem; color:var(--txt-3);
+      letter-spacing:0.1em; margin-bottom:10px;
+    }
+    .proj-name {
+      font-size:1.3rem; font-weight:700; margin-bottom:12px;
+      letter-spacing:-0.01em;
+    }
+    .proj-desc {
+      font-size:0.9rem; color:var(--txt-2); line-height:1.75;
+      flex:1; margin-bottom:20px;
+    }
+    .proj-tags { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:24px; }
+    .proj-tag {
+      padding:4px 12px; font-size:0.75rem; font-weight:500;
+      border:1px solid var(--border); border-radius:4px; color:var(--txt-2);
+    }
+    .proj-link {
+      display:inline-flex; align-items:center; gap:6px;
+      font-size:0.82rem; font-weight:600; letter-spacing:0.06em;
+      text-transform:uppercase; color:var(--gold);
+      transition:gap var(--t), opacity var(--t);
+    }
+    .proj-link:hover { gap:10px; }
+
+    /* ── CONTENT / YOUTUBE ───────────────────────────────────── */
+    #content { background:var(--bg2); }
+    .yt-card {
+      border:1px solid var(--border); border-radius:12px; overflow:hidden;
+      display:grid; grid-template-columns:1fr 1fr;
+      transition:var(--t);
+    }
+    .yt-card:hover { border-color:var(--gold-line); box-shadow:0 20px 60px rgba(0,0,0,0.4); }
+    .yt-banner {
+      position:relative; overflow:hidden;
+      background:var(--navy);
+    }
+    .yt-banner img { width:100%; height:100%; object-fit:cover; transition:transform 0.6s ease; }
+    .yt-card:hover .yt-banner img { transform:scale(1.04); }
+    .yt-info {
+      padding:56px 56px; display:flex; flex-direction:column; justify-content:center;
+      background:var(--surface);
+    }
+    .yt-info .section-label { margin-bottom:12px; }
+    .yt-channel {
+      font-size:2.2rem; font-weight:700; letter-spacing:-0.02em; margin-bottom:16px;
+    }
+    .yt-desc { font-size:1rem; color:var(--txt-2); line-height:1.8; margin-bottom:36px; }
+    .yt-btns { display:flex; gap:12px; flex-wrap:wrap; }
+
+    /* ── CONTACT ─────────────────────────────────────────────── */
+    #contact { background:var(--bg); }
+    .contact-grid {
+      display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:start;
+    }
+    .contact-left .section-title { margin-bottom:16px; }
+    .contact-lead { font-size:1rem; color:var(--txt-2); line-height:1.8; margin-bottom:40px; }
+    .social-row { display:flex; gap:14px; flex-wrap:wrap; }
+    .soc-btn {
+      width:48px; height:48px; border-radius:var(--radius);
+      border:1px solid var(--border);
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.15rem; color:var(--txt-2);
+      transition:var(--t);
+    }
+    .soc-btn:hover { color:var(--gold); border-color:var(--gold); }
+
+    /* Form */
+    .contact-form { display:flex; flex-direction:column; gap:20px; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .field { display:flex; flex-direction:column; gap:8px; }
+    .field label {
+      font-size:0.8rem; font-weight:600; letter-spacing:0.06em;
+      text-transform:uppercase; color:var(--txt-2);
+    }
+    .field input, .field textarea, .field select {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:var(--radius); padding:13px 16px;
+      font-family:var(--sans); font-size:0.95rem; color:var(--txt);
+      transition:border-color var(--t), box-shadow var(--t);
+      outline:none; width:100%;
+    }
+    .field input:focus, .field textarea:focus, .field select:focus {
+      border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,168,76,0.1);
+    }
+    .field input::placeholder, .field textarea::placeholder { color:var(--txt-3); }
+    .field textarea { resize:vertical; min-height:120px; }
+    .field select { appearance:none; cursor:pointer; }
+    .field select option { background:var(--bg2); }
+    .form-submit { align-self:flex-start; }
+
+    /* success */
+    #form-success {
+      display:none; text-align:center; padding:48px 32px;
+      border:1px solid var(--gold-line); border-radius:10px;
+      background:var(--surface);
+      animation:heroFade 0.5s ease-out;
+    }
+    #form-success .check {
+      width:56px; height:56px; border-radius:50%;
+      background:var(--gold-dim); display:flex; align-items:center; justify-content:center;
+      margin:0 auto 20px; font-size:1.4rem; color:var(--gold);
+    }
+    #form-success h4 { font-size:1.4rem; margin-bottom:10px; }
+    #form-success p { color:var(--txt-2); font-size:0.95rem; line-height:1.7; margin-bottom:24px; }
+
+    /* ── FOOTER ──────────────────────────────────────────────── */
+    footer {
+      padding:40px 0; border-top:1px solid var(--border);
+      background:var(--bg);
+    }
+    .footer-inner {
+      max-width:1200px; margin:0 auto; padding:0 32px;
+      display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;
+    }
+    .footer-left { display:flex; align-items:center; gap:16px; }
+    .footer-logo img { height:38px; opacity:0.85; }
+    .footer-copy { font-size:0.82rem; color:var(--txt-3); }
+    .footer-right { font-size:0.82rem; color:var(--txt-3); }
+    .footer-right a { color:var(--gold); transition:opacity var(--t); }
+    .footer-right a:hover { opacity:0.75; }
+
+    /* ── SCROLL REVEAL ───────────────────────────────────────── */
+    .reveal {
+      opacity:0; transform:translateY(32px);
+      transition:opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity:1; transform:none; }
+    .reveal-delay-1 { transition-delay:0.1s; }
+    .reveal-delay-2 { transition-delay:0.2s; }
+    .reveal-delay-3 { transition-delay:0.3s; }
+
+    /* ── RESPONSIVE ──────────────────────────────────────────── */
+    @media (max-width:900px) {
+      .nav-links { display:none; }
+      .hamburger { display:flex; }
+      .about-grid { grid-template-columns:1fr; gap:48px; }
+      .about-visual { order:-1; }
+      .about-logo-wrap { width:220px; height:220px; }
+      .projects-grid { grid-template-columns:1fr; gap:20px; }
+      .yt-card { grid-template-columns:1fr; }
+      .yt-banner { aspect-ratio:16/7; }
+      .yt-info { padding:36px; }
+      .contact-grid { grid-template-columns:1fr; gap:48px; }
+      .form-row { grid-template-columns:1fr; }
+      section { padding:80px 0; }
+    }
+    @media (max-width:600px) {
+      .hero-name { font-size:2.6rem; }
+      .yt-channel { font-size:1.6rem; }
+      .container { padding:0 20px; }
+    }
+  </style>
 </head>
 <body>
-    <!-- Progress Bar -->
-    <div class="scroll-progress-bar"></div>
 
-    <!-- Custom Cursor Dot -->
-    <div class="cursor-dot"></div>
+<!-- Progress bar -->
+<div id="progress"></div>
 
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="navbar-container">
-            <a href="#home" class="navbar-logo">
-                <img src="assets/logo-bs.png.png" alt="BS Logo">
-            </a>
-            <ul class="navbar-menu">
-                <li><a href="#about" class="nav-link">About</a></li>
-                <li><a href="#projects" class="nav-link">Projects</a></li>
-                <li><a href="#content" class="nav-link">Content</a></li>
-                <li><a href="#contact" class="nav-link">Contact</a></li>
-            </ul>
-            <div class="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
+<!-- Cursor -->
+<div id="cursor"></div>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#home" class="nav-logo">
+      <img src="assets/logo-bs.png" alt="BS Qureshi">
+    </a>
+    <ul class="nav-links">
+      <li><a href="#about" class="nav-link">About</a></li>
+      <li><a href="#projects" class="nav-link">Projects</a></li>
+      <li><a href="#content" class="nav-link">Content</a></li>
+      <li><a href="#contact" class="nav-link">Contact</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile menu -->
+<ul class="mobile-menu" id="mobile-menu">
+  <li><a href="#about">About</a></li>
+  <li><a href="#projects">Projects</a></li>
+  <li><a href="#content">Content</a></li>
+  <li><a href="#contact">Contact</a></li>
+</ul>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg" id="hero-bg"></div>
+  <div class="hero-bg-overlay"></div>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow">Portfolio — 2025</p>
+    <h1 class="hero-name">Vashaar<br><span>Sarmad</span></h1>
+    <div class="hero-line"></div>
+    <p class="hero-tagline"><span id="typed"></span><span id="typing-cursor"></span></p>
+    <div class="hero-btns">
+      <a href="#projects" class="btn btn-gold">View Projects</a>
+      <a href="https://www.youtube.com/@BSBAQureshi" target="_blank" class="btn btn-outline">
+        <i class="fab fa-youtube"></i> YouTube Channel
+      </a>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<div class="rule rule-gold"></div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p class="section-label">Who I Am</p>
+        <h2 class="section-title">Developer.<br><em>Creator.</em><br>Student of Knowledge.</h2>
+        <p>I'm Vashaar Sarmad — a Computer Science student, developer, and Islamic content creator. I build tools that serve creators and communities — and I produce long-form video essays rooted in Quranic scholarship under my platform, BS Qureshi.</p>
+        <p>My work lives at the intersection of technology, storytelling, and faith. Whether it's writing Python tools that reach global audiences, or producing cinematic content exploring the Deen — I care about craft at every level.</p>
+        <div class="about-pills">
+          <span class="pill">Computer Science</span>
+          <span class="pill">Video Production</span>
+          <span class="pill">Audio Engineering</span>
+          <span class="pill">Python</span>
+          <span class="pill">AI / LLMs</span>
+          <span class="pill">Content Creation</span>
         </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <svg class="geometric-pattern" viewBox="0 0 1200 800">
-            <defs>
-                <pattern id="geometric" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
-                    <circle cx="50" cy="50" r="30" fill="none" stroke="rgba(201, 168, 76, 0.05)" stroke-width="1"/>
-                    <path d="M 50 20 L 80 50 L 50 80 L 20 50 Z" fill="none" stroke="rgba(201, 168, 76, 0.04)" stroke-width="0.5"/>
-                </pattern>
-            </defs>
-            <rect width="1200" height="800" fill="url(#geometric)"/>
-        </svg>
-        <div class="hero-background" style="background-image: url('assets/bg-frame.png.png')"></div>
-        <div class="hero-overlay"></div>
-        <div class="floating-particles">
-            <div class="particle"></div>
-            <div class="particle"></div>
-            <div class="particle"></div>
-            <div class="particle"></div>
-            <div class="particle"></div>
+      </div>
+      <div class="about-visual reveal reveal-delay-2">
+        <div class="about-logo-wrap">
+          <img src="assets/logo-bs.png" alt="BS Qureshi">
         </div>
-        <div class="hero-content">
-            <h1 class="hero-title">Vashaar Sarmad</h1>
-            <div class="title-underline"></div>
-            <p class="hero-subtitle"><span class="typing-text">Developer. Creator. Student of Knowledge.</span></p>
-            <div class="hero-buttons">
-                <a href="#projects" class="btn btn-primary">View Projects</a>
-                <a href="https://www.youtube.com/@BSBAQureshi" target="_blank" class="btn btn-secondary">YouTube Channel</a>
-            </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="container">
+    <div class="projects-header">
+      <div class="reveal">
+        <p class="section-label">Selected Work</p>
+        <h2 class="section-title">Projects</h2>
+      </div>
+      <a href="https://github.com/Vashaar" target="_blank" class="btn btn-outline reveal">
+        <i class="fab fa-github"></i> GitHub
+      </a>
+    </div>
+
+    <div class="projects-grid">
+
+      <!-- SRTranslate -->
+      <div class="proj-card reveal" style="--card-accent:#0ea5e9;">
+        <div class="proj-img-wrap" style="background:linear-gradient(135deg,rgba(14,165,233,0.08),rgba(14,165,233,0.02));">
+          <img src="assets/srtranslate.png" alt="SRTranslate">
         </div>
-    </section>
-
-    <!-- About Section -->
-    <section class="about" id="about">
-        <div class="container">
-            <h2 class="section-title">About Me</h2>
-            <div class="about-content">
-                <div class="about-text">
-                    <p>I'm Vashaar Sarmad — a Computer Science student, developer, and Islamic content creator. I build tools that serve creators and communities — and I produce long-form video essays rooted in Quranic scholarship under my platform, BS Qureshi.</p>
-                </div>
-                <div class="about-divider"></div>
-                <div class="about-image">
-                    <img src="assets/logo-bs.png.png" alt="BS Qureshi Logo">
-                </div>
-            </div>
+        <div class="proj-body">
+          <p class="proj-num">01</p>
+          <h3 class="proj-name">SRTranslate</h3>
+          <p class="proj-desc">Local SRT subtitle translation tool. Context-aware, glossary-backed, supports Urdu, Arabic, Spanish, and Indonesian. Built for creators expanding global audiences.</p>
+          <div class="proj-tags">
+            <span class="proj-tag">Python</span>
+            <span class="proj-tag">Ollama</span>
+            <span class="proj-tag">Streamlit</span>
+            <span class="proj-tag">NLP</span>
+          </div>
+          <a href="https://github.com/Vashaar/SRTranslate" target="_blank" class="proj-link">
+            View on GitHub <i class="fas fa-arrow-right"></i>
+          </a>
         </div>
-    </section>
+      </div>
 
-    <!-- Projects Section -->
-    <section class="projects" id="projects">
-        <div class="container">
-            <h2 class="section-title">Projects</h2>
-            <div class="projects-grid">
-                <!-- SRTranslate -->
-                <div class="project-card project-srt" data-aos="fade-in" style="--stagger-delay: 0s;">
-                    <div class="project-logo">
-                        <img src="assets/srtranslate.png.png" alt="SRTranslate">
-                    </div>
-                    <h3>SRTranslate</h3>
-                    <p>Local SRT subtitle translation tool. Context-aware, glossary-backed, supports Urdu, Arabic, Spanish, and Indonesian. Built for creators expanding global audiences.</p>
-                    <div class="tech-tags">
-                        <span class="tech-tag">Python</span>
-                        <span class="tech-tag">Ollama</span>
-                        <span class="tech-tag">Streamlit</span>
-                        <span class="tech-tag">NLP</span>
-                    </div>
-                    <a href="https://github.com/Vashaar/SRTranslate" target="_blank" class="project-link btn-primary">View on GitHub</a>
-                </div>
-
-                <!-- PageSnip -->
-                <div class="project-card project-pagesnip" data-aos="fade-in" style="--stagger-delay: 0.15s;">
-                    <div class="project-logo">
-                        <img src="assets/pagesnip.png.png" alt="PageSnip">
-                    </div>
-                    <h3>PageSnip</h3>
-                    <p>Desktop PDF splitter with a clean GUI. Split any document by page range instantly.</p>
-                    <div class="tech-tags">
-                        <span class="tech-tag">Python</span>
-                        <span class="tech-tag">PDF</span>
-                        <span class="tech-tag">Desktop App</span>
-                    </div>
-                    <a href="https://github.com/Vashaar/PageSnip" target="_blank" class="project-link btn-primary">View on GitHub</a>
-                </div>
-
-                <!-- Hikmah Local AI -->
-                <div class="project-card project-hikmah" data-aos="fade-in" style="--stagger-delay: 0.3s;">
-                    <div class="project-logo">
-                        <img src="assets/hikmah.png.png" alt="Hikmah Local AI">
-                    </div>
-                    <h3>Hikmah Local AI</h3>
-                    <p>Local Islamic AI assistant with Quran, Hadith, Seerah, and Bible databases. Arabic transliteration, chat and reference modes.</p>
-                    <div class="tech-tags">
-                        <span class="tech-tag">Python</span>
-                        <span class="tech-tag">AI</span>
-                        <span class="tech-tag">Islamic</span>
-                        <span class="tech-tag">Local LLM</span>
-                    </div>
-                    <a href="https://github.com/Vashaar/hikmah-local-AI" target="_blank" class="project-link btn-primary">View on GitHub</a>
-                </div>
-            </div>
+      <!-- PageSnip -->
+      <div class="proj-card reveal reveal-delay-1" style="--card-accent:#a855f7;">
+        <div class="proj-img-wrap" style="background:linear-gradient(135deg,rgba(168,85,247,0.08),rgba(168,85,247,0.02));">
+          <img src="assets/pagesnip.png" alt="PageSnip">
         </div>
-    </section>
-
-    <!-- Content Section -->
-    <section class="content" id="content">
-        <div class="container">
-            <h2 class="section-title">Content</h2>
-            <p class="section-subtitle">Long-form Islamic video essays exploring Quranic scholarship, prophetic narratives, and the preservation of the Deen.</p>
-            <div class="channel-card" data-aos="fade-in">
-                <img src="assets/logo-bs.png.png" alt="BS Qureshi Channel">
-                <div class="channel-info">
-                    <h3>BS Qureshi</h3>
-                    <p>Subscribe to our YouTube channel for thoughtful, research-backed Islamic content.</p>
-                </div>
-                <a href="https://www.youtube.com/@BSBAQureshi" target="_blank" class="btn btn-primary">Subscribe on YouTube</a>
-            </div>
+        <div class="proj-body">
+          <p class="proj-num">02</p>
+          <h3 class="proj-name">PageSnip</h3>
+          <p class="proj-desc">Desktop PDF splitter with a clean GUI. Split any document by page range instantly — no cloud, no subscriptions, no friction.</p>
+          <div class="proj-tags">
+            <span class="proj-tag">Python</span>
+            <span class="proj-tag">PDF</span>
+            <span class="proj-tag">Desktop App</span>
+          </div>
+          <a href="https://github.com/Vashaar/PageSnip" target="_blank" class="proj-link">
+            View on GitHub <i class="fas fa-arrow-right"></i>
+          </a>
         </div>
-    </section>
+      </div>
 
-    <!-- Contact Section (Footer) -->
-    <footer class="footer" id="contact">
-        <div class="footer-divider"></div>
-        <div class="container">
-            <h3 class="footer-title">Get In Touch</h3>
-            
-            <!-- Contact Form -->
-            <div class="contact-section contact-form-wrapper">
-                <h4 class="contact-heading">Send a Message</h4>
-                <form id="contactForm" class="contact-form">
-                    <div class="form-group">
-                        <label for="name">Your Name</label>
-                        <input type="text" id="name" name="name" required placeholder="Enter your name">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="email">Your Email</label>
-                        <input type="email" id="email" name="email" required placeholder="Enter your email">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Preferred Contact Method</label>
-                        <div class="radio-group">
-                            <label class="radio-label">
-                                <input type="radio" name="contactMethod" value="email" checked>
-                                <span>Email</span>
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="contactMethod" value="phone">
-                                <span>Phone (Text Only)</span>
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="contactMethod" value="facebook">
-                                <span>Facebook Page Contact</span>
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="message">Message</label>
-                        <textarea id="message" name="message" required placeholder="Tell me what you'd like to discuss..." rows="5"></textarea>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary">Send Message</button>
-                </form>
-                
-                <!-- Form Success Message (Hidden by default) -->
-                <div id="formSuccess" class="form-success" style="display: none;">
-                    <i class="fas fa-check-circle"></i>
-                    <h4>Message Received!</h4>
-                    <p id="successMessage"></p>
-                    <button type="button" class="btn btn-secondary" onclick="resetContactForm()">Send Another Message</button>
-                </div>
-            </div>
-            
-            <!-- Social Media -->
-            <div class="contact-section">
-                <h4 class="contact-heading">Connect</h4>
-                <div class="social-links">
-                    <a href="https://www.youtube.com/@BSBAQureshi" target="_blank" title="YouTube" aria-label="YouTube">
-                        <i class="fab fa-youtube"></i>
-                    </a>
-                    <a href="https://www.instagram.com/bsbqureshi/" target="_blank" title="Instagram" aria-label="Instagram">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                    <a href="https://www.tiktok.com/@bsbaqureshi" target="_blank" title="TikTok" aria-label="TikTok">
-                        <i class="fab fa-tiktok"></i>
-                    </a>
-                    <a href="https://www.facebook.com/profile.php?id=61580757495623" target="_blank" title="Facebook" aria-label="Facebook">
-                        <i class="fab fa-facebook"></i>
-                    </a>
-                    <a href="https://github.com/Vashaar" target="_blank" title="GitHub" aria-label="GitHub">
-                        <i class="fab fa-github"></i>
-                    </a>
-                    <a href="https://linktr.ee/BSQureshi" target="_blank" title="Linktree" aria-label="Linktree">
-                        <i class="fas fa-link"></i>
-                    </a>
-                </div>
-            </div>
-            
-            <p class="copyright">© 2025 BS Qureshi. All rights reserved.</p>
+      <!-- Hikmah -->
+      <div class="proj-card reveal reveal-delay-2" style="--card-accent:#10b981;">
+        <div class="proj-img-wrap" style="background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(16,185,129,0.02));">
+          <img src="assets/hikmah.png" alt="Hikmah Local AI">
         </div>
-    </footer>
+        <div class="proj-body">
+          <p class="proj-num">03</p>
+          <h3 class="proj-name">Hikmah Local AI</h3>
+          <p class="proj-desc">Local Islamic AI assistant with Quran, Hadith, Seerah, and Bible databases. Arabic transliteration, chat and reference modes — fully offline.</p>
+          <div class="proj-tags">
+            <span class="proj-tag">Python</span>
+            <span class="proj-tag">Local LLM</span>
+            <span class="proj-tag">AI</span>
+            <span class="proj-tag">Islamic</span>
+          </div>
+          <a href="https://github.com/Vashaar/hikmah-local-AI" target="_blank" class="proj-link">
+            View on GitHub <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
 
-    <script src="script.js"></script>
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- CONTENT / YouTube -->
+<section id="content">
+  <div class="container">
+    <p class="section-label reveal">Creative Work</p>
+    <h2 class="section-title reveal" style="margin-bottom:48px;">BS Qureshi</h2>
+
+    <div class="yt-card reveal">
+      <div class="yt-banner">
+        <img src="assets/BSQ Banner 1.png" alt="BS Qureshi Channel">
+      </div>
+      <div class="yt-info">
+        <p class="section-label">YouTube Channel</p>
+        <h3 class="yt-channel">BS Qureshi</h3>
+        <p class="yt-desc">Long-form Islamic video essays exploring Quranic scholarship, prophetic narratives, and the preservation of the Deen. Research-backed, cinematic, and rooted in tradition.</p>
+        <div class="yt-btns">
+          <a href="https://www.youtube.com/@BSBAQureshi" target="_blank" class="btn btn-gold">
+            <i class="fab fa-youtube"></i> Subscribe
+          </a>
+          <a href="https://linktr.ee/BSQureshi" target="_blank" class="btn btn-outline">All Links</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-grid">
+
+      <div class="contact-left reveal">
+        <p class="section-label">Get In Touch</p>
+        <h2 class="section-title" style="margin-bottom:16px;">Let's <em>connect.</em></h2>
+        <p class="contact-lead">Whether it's a collaboration, a project inquiry, or just a conversation — reach out and I'll get back to you within 48 hours.</p>
+        <div class="social-row">
+          <a href="https://www.youtube.com/@BSBAQureshi" target="_blank" class="soc-btn" title="YouTube"><i class="fab fa-youtube"></i></a>
+          <a href="https://www.instagram.com/bsbqureshi/" target="_blank" class="soc-btn" title="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.tiktok.com/@bsbaqureshi" target="_blank" class="soc-btn" title="TikTok"><i class="fab fa-tiktok"></i></a>
+          <a href="https://www.facebook.com/profile.php?id=61580757495623" target="_blank" class="soc-btn" title="Facebook"><i class="fab fa-facebook"></i></a>
+          <a href="https://github.com/Vashaar" target="_blank" class="soc-btn" title="GitHub"><i class="fab fa-github"></i></a>
+          <a href="https://linktr.ee/BSQureshi" target="_blank" class="soc-btn" title="Linktree"><i class="fas fa-link"></i></a>
+        </div>
+      </div>
+
+      <div class="contact-right reveal reveal-delay-1">
+        <form class="contact-form" id="contactForm">
+          <div class="form-row">
+            <div class="field">
+              <label for="f-name">Name</label>
+              <input type="text" id="f-name" placeholder="Your name" required>
+            </div>
+            <div class="field">
+              <label for="f-email">Email</label>
+              <input type="email" id="f-email" placeholder="your@email.com" required>
+            </div>
+          </div>
+          <div class="field">
+            <label for="f-method">Preferred contact method</label>
+            <select id="f-method">
+              <option value="email">Email</option>
+              <option value="phone">Phone / Text</option>
+              <option value="facebook">Facebook Page</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-message">Message</label>
+            <textarea id="f-message" placeholder="What would you like to discuss?" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-gold form-submit">Send Message</button>
+        </form>
+
+        <div id="form-success">
+          <div class="check"><i class="fas fa-check"></i></div>
+          <h4>Message received.</h4>
+          <p id="success-msg"></p>
+          <button class="btn btn-outline" onclick="resetForm()">Send another</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-left">
+      <div class="footer-logo"><img src="assets/logo-bs.png" alt="BS Qureshi"></div>
+      <span class="footer-copy">© 2025 Vashaar Sarmad</span>
+    </div>
+    <div class="footer-right">
+      <a href="https://linktr.ee/BSQureshi" target="_blank">linktr.ee/BSQureshi</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ── CURSOR ─────────────────────────────────── */
+  const cursor = document.getElementById('cursor');
+  if (!('ontouchstart' in window)) {
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top  = e.clientY + 'px';
+      cursor.style.opacity = '1';
+    });
+    document.addEventListener('mouseleave', () => cursor.style.opacity = '0');
+  }
+
+  /* ── PROGRESS ────────────────────────────────── */
+  const progress = document.getElementById('progress');
+  window.addEventListener('scroll', () => {
+    const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100;
+    progress.style.width = pct + '%';
+  }, { passive:true });
+
+  /* ── NAV ─────────────────────────────────────── */
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  }, { passive:true });
+
+  /* hamburger */
+  const hbg = document.getElementById('hamburger');
+  const mob = document.getElementById('mobile-menu');
+  hbg.addEventListener('click', () => {
+    hbg.classList.toggle('open');
+    mob.classList.toggle('open');
+  });
+  mob.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    hbg.classList.remove('open');
+    mob.classList.remove('open');
+  }));
+
+  /* active nav highlight */
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-link');
+  window.addEventListener('scroll', () => {
+    let cur = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 160) cur = s.id;
+    });
+    navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#'+cur));
+  }, { passive:true });
+
+/* ── PAGE PARALLAX BACKGROUND ───────────────────── */
+  window.addEventListener('scroll', () => {
+    const offset = window.scrollY * 0.15;
+    document.body.style.backgroundPosition = `center calc(${offset}px)`;
+  }, { passive:true });
+
+  /* ── TYPING ANIMATION ────────────────────────── */
+  const phrases = ['Developer.', 'Creator.', 'Student of Knowledge.'];
+  const typed = document.getElementById('typed');
+  let pi = 0, ci = 0, deleting = false;
+  function tick() {
+    const phrase = phrases[pi];
+    if (deleting) {
+      typed.textContent = phrase.slice(0, --ci);
+      if (ci === 0) { deleting = false; pi = (pi+1) % phrases.length; setTimeout(tick, 400); return; }
+      setTimeout(tick, 40);
+    } else {
+      typed.textContent = phrase.slice(0, ++ci);
+      if (ci === phrase.length) { deleting = true; setTimeout(tick, 1800); return; }
+      setTimeout(tick, 60);
+    }
+  }
+  setTimeout(tick, 1200);
+
+  /* ── SCROLL REVEAL ───────────────────────────── */
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+  }, { threshold:0.12, rootMargin:'0px 0px -60px 0px' });
+  revealEls.forEach(el => io.observe(el));
+
+  /* ── SMOOTH SCROLL (no scrollIntoView) ──────── */
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const id = a.getAttribute('href').slice(1);
+      const el = document.getElementById(id);
+      if (!el) return;
+      e.preventDefault();
+      const top = el.getBoundingClientRect().top + window.pageYOffset - 72;
+      window.scrollTo({ top, behavior:'smooth' });
+    });
+  });
+
+  /* ── CONTACT FORM ────────────────────────────── */
+  const CONTACT = { email:'XtreamistX@gmail.com', phone:'516-838-3150', facebook:'BS Qureshi Facebook Page' };
+  document.getElementById('contactForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const name   = document.getElementById('f-name').value;
+    const method = document.getElementById('f-method').value;
+    const methods = { email:`via email at ${CONTACT.email}`, phone:`via text at ${CONTACT.phone}`, facebook:`via the ${CONTACT.facebook}` };
+    document.getElementById('success-msg').innerHTML =
+      `Thanks, ${name}! We'll reach out <strong>${methods[method]}</strong> within 48 hours.`;
+    this.style.display = 'none';
+    document.getElementById('form-success').style.display = 'block';
+  });
+  function resetForm() {
+    document.getElementById('contactForm').style.display = 'flex';
+    document.getElementById('form-success').style.display = 'none';
+    document.getElementById('contactForm').reset();
+  }
+</script>
+
 </body>
 </html>
